@@ -1,0 +1,9 @@
+{% if categories %}
+<a id="main-dd-nav" class="dropdown-trigger text-uppercase {{ color_navigation_text }}" rel="nofollow" data-target="dropdown-nav-top">{{ text_category }}</a>
+<ul id="dropdown-nav-top" class="dropdown-content z-depth-5" itemscope itemtype="http://www.schema.org/SiteNavigationElement">
+	{% for category in categories %}
+	<li><a class="waves-effect" href="{{ category.href }}" itemprop="url"><span itemprop="name">{{ category.name }}</span></a></li>
+	<li class="divider"></li>
+	{% endfor %}
+</ul>
+{% endif %}

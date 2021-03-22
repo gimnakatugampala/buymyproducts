@@ -1,0 +1,242 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<h1>{{ map_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-map" class="form-horizontal">
+			<div class="row">
+				<div class="col-sm-12 col-md-8">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3></div>
+						<div class="panel-body">
+							<ul class="nav nav-tabs" id="apply-tab">
+								<li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+								{% if materializeapi %}<li><a href="#tab-materializeapi" data-toggle="tab">{{ text_about_template }}</a></li>{% endif %}
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane active" id="tab-general">
+									<div class="form-horizontal">
+										<div class="alert alert-info google-maps-settings"><i class="fa fa-exclamation-circle"></i>&nbsp;{{ help_google_map }}</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="input-type-map">{{ entry_map }}:</label>
+											<div class="col-sm-10">
+												<select name="module_map_maps" id="input-type-map" class="selectpicker show-tick" data-width="100%">
+													{% for map in maps %}
+													{% if map.value == module_map_maps %}
+													<option value="{{ map.value }}" selected="selected">{{ map.text }}</option>
+													{% else %}
+													<option value="{{ map.value }}">{{ map.text }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="form-group required google-maps-settings">
+											<label class="col-sm-2 control-label">{{ entry_api }}:</label>
+											<div class="col-sm-10">
+												<input type="text" name="module_map_google_api" value="{{ module_map_google_api }}" placeholder="{{ entry_api }}" class="form-control" />
+												{% if error_google_api %}<div class="text-danger">{{ error_google_api }}</div>{% endif %}
+											</div>
+										</div>
+										<div class="form-group required">
+											<label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_coordinates }}">{{ text_coordinates }}:</span></label>
+											<div class="col-sm-10">
+												<div class="row">
+													<div class="col-sm-6">
+														<input type="text" name="module_map_geo_lat" value="{{ module_map_geo_lat }}" placeholder="{{ entry_lat }}" class="form-control" />
+													</div>
+													<div class="col-sm-6">
+														<input type="text" name="module_map_geo_lng" value="{{ module_map_geo_lng }}" placeholder="{{ entry_lng }}" class="form-control" />
+													</div>
+												</div>
+												{% if error_geo_lat %}<div class="text-danger">{{ error_geo_lat }}</div>{% endif %}
+												{% if error_geo_lng %}<div class="text-danger">{{ error_geo_lng }}</div>{% endif %}
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label">{{ entry_description }}:</label>
+											<div class="col-sm-10">
+												<ul class="nav nav-tabs" id="maps-descriptions-language">
+													{% for language in languages %}
+													<li><a href="#maps-descriptions{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+													{% endfor %}
+												</ul>
+												<div class="tab-content">
+													{% for language in languages %}
+													<div class="tab-pane fade" id="maps-descriptions{{ language.language_id }}">
+														<textarea name="module_map[{{ language.language_id }}][map_description]" placeholder="{{ entry_description }}" data-toggle="summernote" data-lang="{{ summernote }}" class="form-control">{{ module_map[language.language_id] ? module_map[language.language_id].map_description }}</textarea>
+													</div>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label">{{ entry_icon_pin }}:</label>
+											<div class="col-sm-10">
+												<a href="" id="thumb-icon-pin" data-toggle="image" class="img-thumbnail"><img src="{{ module_map_icon_pin_thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
+												<input type="hidden" name="module_map_icon_pin" value="{{ module_map_icon_pin }}" id="input-icon-pin" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ help_icon_size }}">{{ entry_icon_size }}:</span></label>
+											<div class="col-sm-10">
+												<div class="row">
+													<div class="col-sm-6">
+														<input type="text" name="module_map_icon_pin_width" value="{{ module_map_icon_pin_width }}" placeholder="{{ entry_width }}" class="form-control" />
+													</div>
+													<div class="col-sm-6">
+														<input type="text" name="module_map_icon_pin_height" value="{{ module_map_icon_pin_height }}" placeholder="{{ entry_height }}" class="form-control" />
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label">{{ entry_color_btn }}:</label>
+											<div class="col-sm-4">
+												<select name="module_map_color_btn" class="selectpicker selectpicker-live-search show-tick">
+													{% for color in module_map_colors %}
+													{% if color.name == module_map_color_btn %}
+													<option value="{{ color.name }}" class="{{ color.name }}" style="background: #{{ color.hex }};" selected="selected">{{ color.name }}</option>
+													{% else %}
+													<option value="{{ color.name }}" class="{{ color.name }}" style="background: #{{ color.hex }};">{{ color.name }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+												<select name="module_map_color_btn_text" class="selectpicker selectpicker-live-search show-tick">
+													{% for color in module_map_colors_text %}
+													{% if color.name == module_map_color_btn_text %}
+													<option value="{{ color.name }}" class="{{ color.name }}" style="background: #{{ color.hex }};" selected="selected">{{ color.name }}</option>
+													{% else %}
+													<option value="{{ color.name }}" class="{{ color.name }}" style="background: #{{ color.hex }};">{{ color.name }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								{{ materializeapi }}
+							</div>
+						</div>
+						<div id="footer-appeal-users" class="panel-footer text-center"></div>
+					</div>
+				</div>
+				<div class="col-sm-12 col-md-4">
+					<div class="panel panel-default" id="panel-data">
+						<div class="panel-heading"><h3 class="panel-title"><i class="fa fa-power-off"></i> {{ entry_status }}</h3></div>
+						<div class="panel-body">
+							<select name="module_map_status" id="map-status" class="selectpicker show-tick" data-width="100%">
+								{% if module_map_status %}
+								<option value="1" selected="selected" data-icon="fa-toggle-on">{{ text_enabled }}</option>
+								<option value="0" data-icon="fa-toggle-off">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1" data-icon="fa-toggle-on">{{ text_enabled }}</option>
+								<option value="0" selected="selected" data-icon="fa-toggle-off">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+						<div class="panel-footer">
+							<div class="row">
+								<div class="col-sm-6">
+									<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
+								</div>
+								<div class="col-sm-6 text-right">
+									<button type="submit" form="form-map" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" name="module_map_installed_appeal" value="0">
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	// Open tab
+	$('#maps-descriptions-language a:first').tab('show');
+
+	// Selectpicker
+	$('.selectpicker.selectpicker-live-search').selectpicker({
+		size: 10,
+		liveSearch: true,
+		iconBase: 'fa',
+		tickIcon: 'fa-check'
+	});
+
+	// Google Maps Settings
+	var inputMaps = $("#input-type-map");
+
+	if (inputMaps.val() == 'google_maps') {$('.google-maps-settings').show();}
+	if (inputMaps.val() != 'google_maps') {$('.google-maps-settings').hide();}
+
+	inputMaps.change(function(){
+		if (inputMaps.val() == 'google_maps') {$('.google-maps-settings').show();}
+		if (inputMaps.val() != 'google_maps') {$('.google-maps-settings').hide();}
+	});
+
+	// Notify
+	{% if error_warning %}
+	$.notify({
+		icon: 'fa fa-exclamation-circle',
+		message: '{{ error_warning }}'
+	},{
+		type: "danger"
+	});
+	{% endif %}
+
+	{% if error_google_api %}
+	$.notify({
+		icon: 'fa fa-exclamation-circle',
+		message: '{{ error_google_api }}'
+	},{
+		type: "danger"
+	});
+	{% endif %}
+
+	{% if error_geo_lat %}
+	$.notify({
+		icon: 'fa fa-exclamation-circle',
+		message: '{{ error_geo_lat }}'
+	},{
+		type: "danger"
+	});
+	{% endif %}
+
+	{% if error_geo_lng %}
+	$.notify({
+		icon: 'fa fa-exclamation-circle',
+		message: '{{ error_geo_lng }}'
+	},{
+		type: "danger"
+	});
+	{% endif %}
+
+	$('#footer-appeal-users').load('index.php?route=extension/materialize/appeal/installed/footer&user_token={{ user_token }}');
+
+	{% if module_map_installed_appeal %}
+	$.ajax({
+		url: 'index.php?route=extension/materialize/appeal/installed&modal_title={{ map_title }}&user_token={{ user_token }}',
+		dataType: 'html',
+		success: function(html) {
+			$('#modal-materialize-installed').remove();
+
+			$('body').prepend(html);
+
+			$('#modal-materialize-installed').modal('show');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	{% endif %}
+</script>
+{{ footer }}

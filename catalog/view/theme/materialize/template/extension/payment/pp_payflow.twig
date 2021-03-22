@@ -1,0 +1,93 @@
+<form class="card-panel">
+	<div id="payment">
+		<h3>{{ text_credit_card }}</h3>
+		<div class="input-field">
+			<input type="text" name="cc_owner" value="" placeholder="{{ entry_cc_owner }}" id="input-cc-owner">
+			<label class="required" for="input-cc-number">{{ entry_cc_owner }}</label>
+		</div>
+		<div class="input-field">
+			<select name="cc_type" id="input-cc-type">
+				{% for card in cards %}
+				<option value="{{ card.value }}">{{ card.text }}</option>
+				{% endfor %}
+			</select>
+			<label class="required" for="input-cc-type">{{ entry_cc_type }}</label>
+		</div>
+		<div class="input-field">
+			<input type="text" name="cc_number" value="" placeholder="{{ entry_cc_number }}" id="input-cc-number">
+			<label class="required" for="input-cc-number">{{ entry_cc_number }}</label>
+		</div>
+		<div class="input-field">
+			<div class="row">
+				<div class="col s2">
+					<label class="required" for="input-cc-start-date">{{ entry_cc_start_date }}</label>
+				</div>
+				<div class="col s3">
+					<select name="cc_start_date_month" id="input-cc-start-date">
+						{% for month in months %}
+						<option value="{{ month.value }}">{{ month.text }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col s3">
+					<select name="cc_start_date_year">
+						{% for year in year_valid %}
+						<option value="{{ year.value }}">{{ year.text }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="input-field">
+			<div class="row">
+				<div class="col s2">
+					<label class="required" for="input-cc-expire-date">{{ entry_cc_expire_date }}</label>
+				</div>
+				<div class="col s3">
+					<select name="cc_expire_date_month" id="input-cc-expire-date">
+						{% for month in months %}
+						<option value="{{ month.value }}">{{ month.text }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col s3">
+					<select name="cc_expire_date_year">
+						{% for year in year_expire %}
+						<option value="{{ year.value }}">{{ year.text }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="input-field">
+			<input type="text" name="cc_cvv2" value="" placeholder="{{ entry_cc_cvv2 }}" id="input-cc-cvv2">
+			<label class="required" for="input-cc-cvv2">{{ entry_cc_cvv2 }}</label>
+		</div>
+		<div class="input-field">
+			<input type="text" name="cc_issue" value="" placeholder="{{ entry_cc_issue }}" id="input-cc-issue">
+			<label for="input-cc-issue">{{ entry_cc_issue }}</label>
+		</div>
+	</div>
+</form>
+<div class="flex-reverse">
+	<button type="button" value="{{ button_confirm }}" id="button-confirm" class="btn waves-effect waves-light red">{{ button_confirm }}</button>
+</div>
+<script>
+$('#button-confirm').bind('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/payment/pp_payflow/send',
+		type: 'post',
+		data: $('#payment :input'),
+		dataType: 'json',
+		success: function(json) {
+			if (json['error']) {
+				alert(json['error']);
+			}
+
+			if (json['success']) {
+				location = json['success'];
+			}
+		}
+	});
+});
+</script>
